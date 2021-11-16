@@ -7,8 +7,9 @@ public class MapManager : MonoBehaviour
     private GameObject m_prefab_tile;
     private GameObject m_prefab_wall;
     private Transform m_Transform;
-    private Color colorOne = new Color(124 / 255f, 155 / 255f, 230 / 255f);
+    private Color colorOne = new Color(124 / 255f, 93 / 255f, 169 / 255f);
     private Color colorTwo = new Color(125 / 255f, 169 / 255f, 233 / 255f);
+    private Color colorWall = new Color(87 / 255f, 169 / 255f, 233 / 255f);
     // Start is called before the first frame update
     void Start()
     {
@@ -32,15 +33,16 @@ public class MapManager : MonoBehaviour
                 if (j == 0 || j == 5)
                 {
                     obj = GameObject.Instantiate(m_prefab_wall, pos, Quaternion.Euler(rot));
+                    obj.GetComponent<MeshRenderer>().material.color = colorWall;
                 }
                 else
                 {
                     obj = GameObject.Instantiate(m_prefab_tile, pos, Quaternion.Euler(rot));
                     obj.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorOne;
 
+                    obj.GetComponent<MeshRenderer>().material.color = colorOne;
                 }
                 obj.GetComponent<Transform>().SetParent(m_Transform);
-                obj.GetComponent<MeshRenderer>().material.color = colorOne;
             }
         }
 
