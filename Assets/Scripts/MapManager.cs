@@ -6,10 +6,11 @@ public class MapManager : MonoBehaviour
 {
     private GameObject m_prefab_tile;
     private GameObject m_prefab_wall;
+    private List<GameObject[]> mapList = new List<GameObject[]>();
     private Transform m_Transform;
-    private Color colorOne = new Color(124 / 255f, 93 / 255f, 169 / 255f);
+    private Color colorOne = new Color(124 / 255f, 155 / 255f, 230 / 255f);
     private Color colorTwo = new Color(125 / 255f, 169 / 255f, 233 / 255f);
-    private Color colorWall = new Color(87 / 255f, 169 / 255f, 233 / 255f);
+    private Color colorWall = new Color(87 / 255f, 93 / 255f, 169 / 255f);
     // Start is called before the first frame update
     void Start()
     {
@@ -23,8 +24,10 @@ public class MapManager : MonoBehaviour
     private void createMapItem()
     {
         float span = Mathf.Sqrt(2) * 0.254f;
+
         for (int i = 0; i < 10; i++)
         {
+            GameObject[] item = new GameObject[6];
             for (int j = 0; j < 6; j++)
             {
                 Vector3 pos = new Vector3(j * span, 0, i * span);
@@ -43,11 +46,11 @@ public class MapManager : MonoBehaviour
                     obj.GetComponent<MeshRenderer>().material.color = colorOne;
                 }
                 obj.GetComponent<Transform>().SetParent(m_Transform);
+                item[j] = obj;
             }
-        }
+            mapList.Add(item);
 
-        for (int i = 0; i < 10; i++)
-        {
+            GameObject[] item2 = new GameObject[5];
             for (int j = 0; j < 5; j++)
             {
                 Vector3 pos = new Vector3(j * span + span / 2, 0, i * span + span / 2);
@@ -56,7 +59,9 @@ public class MapManager : MonoBehaviour
                 tile.GetComponent<Transform>().SetParent(m_Transform);
                 tile.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorTwo;
                 tile.GetComponent<MeshRenderer>().material.color = colorTwo;
+                item[j] = tile;
             }
+            mapList.Add(item2); 
         }
     }
 
