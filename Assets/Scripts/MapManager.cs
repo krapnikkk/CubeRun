@@ -6,7 +6,7 @@ public class MapManager : MonoBehaviour
 {
     private GameObject m_prefab_tile;
     private GameObject m_prefab_wall;
-    private List<GameObject[]> mapList = new List<GameObject[]>();
+    public List<GameObject[]> mapList = new List<GameObject[]>();
     private Transform m_Transform;
     private Color colorOne = new Color(124 / 255f, 155 / 255f, 230 / 255f);
     private Color colorTwo = new Color(125 / 255f, 169 / 255f, 233 / 255f);
@@ -59,15 +59,25 @@ public class MapManager : MonoBehaviour
                 tile.GetComponent<Transform>().SetParent(m_Transform);
                 tile.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorTwo;
                 tile.GetComponent<MeshRenderer>().material.color = colorTwo;
-                item[j] = tile;
+                item2[j] = tile;
             }
-            mapList.Add(item2); 
+            mapList.Add(item2);
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            for (int i = 0; i < mapList.Count; i++)
+            {
+                for (int j = 0; j < mapList[i].Length; j++)
+                {
+                    mapList[i][j].name = i + "-" + j;
+                }
 
+            }
+        }
     }
 }
