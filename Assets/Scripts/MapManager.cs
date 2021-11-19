@@ -11,26 +11,27 @@ public class MapManager : MonoBehaviour
     private Color colorOne = new Color(124 / 255f, 155 / 255f, 230 / 255f);
     private Color colorTwo = new Color(125 / 255f, 169 / 255f, 233 / 255f);
     private Color colorWall = new Color(87 / 255f, 93 / 255f, 169 / 255f);
+
+    public float halfFloor = Mathf.Sqrt(2) * 0.254f;
     // Start is called before the first frame update
     void Start()
     {
         m_prefab_tile = Resources.Load("tile_white") as GameObject;
         m_prefab_wall = Resources.Load("wall") as GameObject;
         m_Transform = gameObject.GetComponent<Transform>();
-        createMapItem();
+        CreateMapItem(0);
 
     }
 
-    private void createMapItem()
+    public void CreateMapItem(float offsetZ)
     {
-        float span = Mathf.Sqrt(2) * 0.254f;
 
         for (int i = 0; i < 10; i++)
         {
             GameObject[] item = new GameObject[6];
             for (int j = 0; j < 6; j++)
             {
-                Vector3 pos = new Vector3(j * span, 0, i * span);
+                Vector3 pos = new Vector3(j * halfFloor, 0, offsetZ + i * halfFloor);
                 Vector3 rot = new Vector3(-90, 45, 0);
                 GameObject obj = null;
                 if (j == 0 || j == 5)
@@ -53,7 +54,7 @@ public class MapManager : MonoBehaviour
             GameObject[] item2 = new GameObject[5];
             for (int j = 0; j < 5; j++)
             {
-                Vector3 pos = new Vector3(j * span + span / 2, 0, i * span + span / 2);
+                Vector3 pos = new Vector3(j * halfFloor + halfFloor / 2, 0, offsetZ + i * halfFloor + halfFloor / 2);
                 Vector3 rot = new Vector3(-90, 45, 0);
                 GameObject tile = GameObject.Instantiate(m_prefab_tile, pos, Quaternion.Euler(rot));
                 tile.GetComponent<Transform>().SetParent(m_Transform);
