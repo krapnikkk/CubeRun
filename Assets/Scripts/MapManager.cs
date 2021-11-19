@@ -69,16 +69,45 @@ public class MapManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            for (int i = 0; i < mapList.Count; i++)
-            {
-                for (int j = 0; j < mapList[i].Length; j++)
-                {
-                    mapList[i][j].name = i + "-" + j;
-                }
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     for (int i = 0; i < mapList.Count; i++)
+        //     {
+        //         for (int j = 0; j < mapList[i].Length; j++)
+        //         {
+        //             mapList[i][j].name = i + "-" + j;
+        //         }
 
+        //     }
+        // }
+    }
+
+    public void StartTileDown()
+    {
+        print("StartTileDown");
+        StartCoroutine("TileDown");
+    }
+
+    public void StopTileDown()
+    {
+        StopCoroutine("TileDown");
+    }
+
+    int index = 0;
+    private IEnumerable TileDown()
+    {
+        while (true)
+        {
+            print("TileDown");
+            for (int i = 0; i < mapList[index].Length; i++)
+            {
+                GameObject obj = mapList[index][i];
+                Rigidbody rb = obj.AddComponent<Rigidbody>();
+                rb.angularVelocity = new Vector3(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)) * Random.Range(1, 10);
+                GameObject.Destroy(obj, 1.0f);
             }
+            index++;
+            yield return new WaitForSeconds(0.5f);
         }
     }
 }

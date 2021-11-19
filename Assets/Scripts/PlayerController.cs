@@ -6,6 +6,8 @@ public class PlayerController : MonoBehaviour
 {
     private Transform m_Transform;
     private MapManager m_MapManager;
+
+    private CameraFollow m_CameraFollow;
     private Color colorOne = new Color(122 / 255f, 85 / 255f, 179 / 255f);
     private Color colorTwo = new Color(126 / 255f, 93 / 255f, 183 / 255f);
     private Color playerColor2;
@@ -16,15 +18,18 @@ public class PlayerController : MonoBehaviour
     {
         m_Transform = gameObject.GetComponent<Transform>();
         m_MapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
+        m_CameraFollow = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
         // SetPlayerPos();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             SetPlayerPos(z, x);
+            m_CameraFollow.startFollow = true;
+            m_MapManager.StartTileDown();
         }
         PlayerControl();
     }
