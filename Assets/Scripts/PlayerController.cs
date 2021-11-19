@@ -80,8 +80,8 @@ public class PlayerController : MonoBehaviour
 
     private void CalcPosition(){
         int mapListCount = m_MapManager.mapList.Count;
-        if(mapListCount - z <= 5){
-            float offsetZ = m_MapManager.mapList[mapListCount - 1][0].GetComponent<Transform>().position.z + m_MapManager.halfFloor;
+        if(mapListCount - z <= 12){
+            float offsetZ = m_MapManager.mapList[mapListCount - 1][0].GetComponent<Transform>().position.z + m_MapManager.halfFloor / 2;
             m_MapManager.CreateMapItem(offsetZ);
         }
     }
