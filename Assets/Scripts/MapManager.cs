@@ -8,11 +8,13 @@ public class MapManager : MonoBehaviour
     private GameObject m_prefab_wall;
     private GameObject m_prefab_spikes;
     private GameObject m_prefab_sky_spikes;
+    private GameObject m_prefab_gem;
     public List<GameObject[]> mapList = new List<GameObject[]>();
     private Transform m_Transform;
     private int pr_hole = 0;
     private int pr_spikes = 0;
     private int pr_sky_spikes = 0;
+    private int pr_gem = 2;
     private PlayerController m_PlayerController;
     private Color colorOne = new Color(124 / 255f, 155 / 255f, 230 / 255f);
     private Color colorTwo = new Color(125 / 255f, 169 / 255f, 233 / 255f);
@@ -26,6 +28,7 @@ public class MapManager : MonoBehaviour
         m_prefab_wall = Resources.Load("wall") as GameObject;
         m_prefab_spikes = Resources.Load("moving_spikes") as GameObject;
         m_prefab_sky_spikes = Resources.Load("smashing_spikes") as GameObject;
+        m_prefab_gem = Resources.Load("gem 2") as GameObject;
 
         m_Transform = gameObject.GetComponent<Transform>();
         m_PlayerController = GameObject.Find("cube_books").GetComponent<PlayerController>();
@@ -56,8 +59,14 @@ public class MapManager : MonoBehaviour
                     {
                         obj = GameObject.Instantiate(m_prefab_tile, pos, Quaternion.Euler(rot));
                         obj.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorOne;
-
                         obj.GetComponent<MeshRenderer>().material.color = colorOne;
+
+                        int gemPr = CalcGemPR();
+                        if(gemPr == 1){
+                            Transform transform = obj.GetComponent<Transform>();
+                            GameObject gem = GameObject.Instantiate(m_prefab_gem,transform.position+new Vector3(0,0.06f,0),Quaternion.identity);
+                            gem.GetComponent<Transform>().SetParent(transform);
+                        }
                     }
                     else if (pr == 1)
                     {
@@ -82,13 +91,35 @@ public class MapManager : MonoBehaviour
             GameObject[] item2 = new GameObject[5];
             for (int j = 0; j < 5; j++)
             {
+                GameObject obj = null;
+
                 Vector3 pos = new Vector3(j * halfFloor + halfFloor / 2, 0, offsetZ + i * halfFloor + halfFloor / 2);
                 Vector3 rot = new Vector3(-90, 45, 0);
-                GameObject tile = GameObject.Instantiate(m_prefab_tile, pos, Quaternion.Euler(rot));
-                tile.GetComponent<Transform>().SetParent(m_Transform);
-                tile.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorTwo;
-                tile.GetComponent<MeshRenderer>().material.color = colorTwo;
-                item2[j] = tile;
+                int pr = CalcPR();
+                if (pr == 0)
+                {
+                    obj = GameObject.Instantiate(m_prefab_tile, pos, Quaternion.Euler(rot));
+                    obj.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorTwo;
+
+                    obj.GetComponent<MeshRenderer>().material.color = colorTwo;
+                }
+                else if (pr == 1)
+                {
+                    obj = new GameObject();
+                    obj.GetComponent<Transform>().position = pos;
+                    obj.GetComponent<Transform>().rotation = Quaternion.Euler(rot);
+                }
+                else if (pr == 2)
+                {
+                    obj = GameObject.Instantiate(m_prefab_spikes, pos, Quaternion.Euler(rot));
+                }
+                else if (pr == 3)
+                {
+                    obj = GameObject.Instantiate(m_prefab_sky_spikes, pos, Quaternion.Euler(rot));
+                }
+
+                obj.GetComponent<Transform>().SetParent(m_Transform);
+                item2[j] = obj;
             }
             mapList.Add(item2);
         }
@@ -125,7 +156,7 @@ public class MapManager : MonoBehaviour
     {
         while (true)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             for (int i = 0; i < mapList[index].Length; i++)
             {
                 GameObject obj = mapList[index][i];
@@ -136,6 +167,7 @@ public class MapManager : MonoBehaviour
             if (m_PlayerController.z == index)
             {
                 StopTileDown();
+                m_PlayerController.FallDown();
             }
             index++;
 
@@ -160,6 +192,16 @@ public class MapManager : MonoBehaviour
         else if (61 < pr && pr < pr_sky_spikes + 60)
         {
             return 3;
+        }
+        return 0;
+    }
+
+    private int CalcGemPR()
+    {
+        int pr = Random.Range(1, 100);
+        if (pr <= pr_gem)
+        {
+            return 1;
         }
         return 0;
     }

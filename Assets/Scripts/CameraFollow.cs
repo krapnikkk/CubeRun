@@ -27,7 +27,7 @@ public class CameraFollow : MonoBehaviour
     {
         if (startFollow)
         {
-            Vector3 nextPos = new Vector3(m_Transiton.position.x, m_Player.position.y + 1.08f, m_Player.position.z);
+            Vector3 nextPos = new Vector3(m_Transiton.position.x, m_Player.position.y + 1.5f, m_Player.position.z);
             m_Transiton.position = Vector3.Lerp(m_Transiton.position, nextPos, Time.deltaTime);
         }
     }

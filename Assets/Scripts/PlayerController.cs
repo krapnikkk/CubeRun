@@ -11,8 +11,17 @@ public class PlayerController : MonoBehaviour
     private Color colorOne = new Color(122 / 255f, 85 / 255f, 179 / 255f);
     private Color colorTwo = new Color(126 / 255f, 93 / 255f, 183 / 255f);
     private Color playerColor2;
+
+    private int gemCount = 0;
+
+    private void AddGem()
+    {
+        gemCount++;
+    }
     public int z = 3;
     public int x = 2;
+
+    private bool live = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -31,7 +40,10 @@ public class PlayerController : MonoBehaviour
             m_CameraFollow.startFollow = true;
             m_MapManager.StartTileDown();
         }
-        PlayerControl();
+        if (live)
+        {
+            PlayerControl();
+        }
     }
 
     private void PlayerControl()
@@ -69,26 +81,83 @@ public class PlayerController : MonoBehaviour
     void SetPlayerPos(int z, int x)
     {
         Transform playerPos = m_MapManager.mapList[z][x].GetComponent<Transform>();
-        MeshRenderer floor = playerPos.Find("normal_a2").GetComponent<MeshRenderer>();
+        MeshRenderer obj = null;
 
-        if (z % 2 == 0)
+        m_Transform.position = playerPos.position + new Vector3(0, 0.254f / 2, 0);
+        m_Transform.rotation = playerPos.rotation;
+
+        if (playerPos.tag == "tile")
         {
-            floor.material.color = colorOne;
+            obj = playerPos.Find("normal_a2").GetComponent<MeshRenderer>();
+        }
+        else if (playerPos.tag == "sky_trap")
+        {
+            obj = playerPos.Find("smashing_spikes_a2").GetComponent<MeshRenderer>();
+        }
+        else if (playerPos.tag == "floor_trap")
+        {
+            obj = playerPos.Find("moving_spikes_a2").GetComponent<MeshRenderer>();
+        }
+
+
+        if (obj)
+        {
+            if (z % 2 == 0)
+            {
+                obj.material.color = colorOne;
+            }
+            else
+            {
+                obj.material.color = colorTwo;
+            }
         }
         else
         {
-            floor.material.color = colorTwo;
+            FallDown();
         }
-        m_Transform.position = playerPos.position + new Vector3(0, 0.254f / 2, 0);
-        m_Transform.rotation = playerPos.rotation;
     }
 
-    private void CalcPosition(){
+    private void CalcPosition()
+    {
         int mapListCount = m_MapManager.mapList.Count;
-        if(mapListCount - z <= 12){
+        if (mapListCount - z <= 12)
+        {
             m_MapManager.AddPR();
             float offsetZ = m_MapManager.mapList[mapListCount - 1][0].GetComponent<Transform>().position.z + m_MapManager.halfFloor / 2;
             m_MapManager.CreateMapItem(offsetZ);
+        }
+    }
+
+    public void FallDown()
+    {
+        gameObject.AddComponent<Rigidbody>();
+        StartCoroutine("GameOver", true);
+    }
+
+    private void OnTriggerEnter(Collider coll)
+    {
+        print(coll);
+        if (coll.tag == "spikes")
+        {
+            StartCoroutine("GameOver", false);
+        }
+        if (coll.tag == "gem")
+        {
+            GameObject.Destroy(coll.gameObject.GetComponent<Transform>().parent.gameObject);
+            AddGem();
+        }
+    }
+
+    public IEnumerator GameOver(bool now)
+    {
+        if (now)
+        {
+            yield return new WaitForSeconds(0.5f);
+        }
+        if (live)
+        {
+            live = false;
+            m_CameraFollow.startFollow = false;
         }
     }
 }
