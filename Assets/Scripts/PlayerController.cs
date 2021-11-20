@@ -13,10 +13,15 @@ public class PlayerController : MonoBehaviour
     private Color playerColor2;
 
     private int gemCount = 0;
+    private int moveScore = 0;
 
     private void AddGem()
     {
         gemCount++;
+    }
+
+    private void AddMoveScore(){
+        moveScore++;
     }
     public int z = 3;
     public int x = 2;
@@ -143,7 +148,7 @@ public class PlayerController : MonoBehaviour
         }
         if (coll.tag == "gem")
         {
-            GameObject.Destroy(coll.gameObject.GetComponent<Transform>().parent.gameObject);
+            GameObject.Destroy(coll.gameObject.GetComponent<Transform>().gameObject);
             AddGem();
         }
     }

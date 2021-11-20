@@ -61,12 +61,7 @@ public class MapManager : MonoBehaviour
                         obj.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorOne;
                         obj.GetComponent<MeshRenderer>().material.color = colorOne;
 
-                        int gemPr = CalcGemPR();
-                        if(gemPr == 1){
-                            Transform transform = obj.GetComponent<Transform>();
-                            GameObject gem = GameObject.Instantiate(m_prefab_gem,transform.position+new Vector3(0,0.06f,0),Quaternion.identity);
-                            gem.GetComponent<Transform>().SetParent(transform);
-                        }
+                        CreateGem(obj);
                     }
                     else if (pr == 1)
                     {
@@ -102,6 +97,7 @@ public class MapManager : MonoBehaviour
                     obj.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorTwo;
 
                     obj.GetComponent<MeshRenderer>().material.color = colorTwo;
+                    CreateGem(obj);
                 }
                 else if (pr == 1)
                 {
@@ -125,6 +121,16 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    private void CreateGem(GameObject obj)
+    {
+        int gemPr = CalcGemPR();
+        if (gemPr == 1)
+        {
+            Transform transform = obj.GetComponent<Transform>();
+            GameObject gem = GameObject.Instantiate(m_prefab_gem, transform.position + new Vector3(0, 0.06f, 0), Quaternion.identity);
+            gem.GetComponent<Transform>().SetParent(transform);
+        }
+    }
     // Update is called once per frame
     void Update()
     {
