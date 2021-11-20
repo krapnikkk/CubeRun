@@ -6,8 +6,14 @@ public class MapManager : MonoBehaviour
 {
     private GameObject m_prefab_tile;
     private GameObject m_prefab_wall;
+    private GameObject m_prefab_spikes;
+    private GameObject m_prefab_sky_spikes;
     public List<GameObject[]> mapList = new List<GameObject[]>();
     private Transform m_Transform;
+    private int pr_hole = 0;
+    private int pr_spikes = 0;
+    private int pr_sky_spikes = 0;
+    private PlayerController m_PlayerController;
     private Color colorOne = new Color(124 / 255f, 155 / 255f, 230 / 255f);
     private Color colorTwo = new Color(125 / 255f, 169 / 255f, 233 / 255f);
     private Color colorWall = new Color(87 / 255f, 93 / 255f, 169 / 255f);
@@ -18,7 +24,11 @@ public class MapManager : MonoBehaviour
     {
         m_prefab_tile = Resources.Load("tile_white") as GameObject;
         m_prefab_wall = Resources.Load("wall") as GameObject;
+        m_prefab_spikes = Resources.Load("moving_spikes") as GameObject;
+        m_prefab_sky_spikes = Resources.Load("smashing_spikes") as GameObject;
+
         m_Transform = gameObject.GetComponent<Transform>();
+        m_PlayerController = GameObject.Find("cube_books").GetComponent<PlayerController>();
         CreateMapItem(0);
 
     }
@@ -41,10 +51,28 @@ public class MapManager : MonoBehaviour
                 }
                 else
                 {
-                    obj = GameObject.Instantiate(m_prefab_tile, pos, Quaternion.Euler(rot));
-                    obj.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorOne;
+                    int pr = CalcPR();
+                    if (pr == 0)
+                    {
+                        obj = GameObject.Instantiate(m_prefab_tile, pos, Quaternion.Euler(rot));
+                        obj.GetComponent<Transform>().Find("normal_a2").GetComponent<MeshRenderer>().material.color = colorOne;
 
-                    obj.GetComponent<MeshRenderer>().material.color = colorOne;
+                        obj.GetComponent<MeshRenderer>().material.color = colorOne;
+                    }
+                    else if (pr == 1)
+                    {
+                        obj = new GameObject();
+                        obj.GetComponent<Transform>().position = pos;
+                        obj.GetComponent<Transform>().rotation = Quaternion.Euler(rot);
+                    }
+                    else if (pr == 2)
+                    {
+                        obj = GameObject.Instantiate(m_prefab_spikes, pos, Quaternion.Euler(rot));
+                    }
+                    else if (pr == 3)
+                    {
+                        obj = GameObject.Instantiate(m_prefab_sky_spikes, pos, Quaternion.Euler(rot));
+                    }
                 }
                 obj.GetComponent<Transform>().SetParent(m_Transform);
                 item[j] = obj;
@@ -84,7 +112,6 @@ public class MapManager : MonoBehaviour
 
     public void StartTileDown()
     {
-        print("StartTileDown");
         StartCoroutine("TileDown");
     }
 
@@ -94,11 +121,11 @@ public class MapManager : MonoBehaviour
     }
 
     int index = 0;
-    private IEnumerable TileDown()
+    private IEnumerator TileDown()
     {
         while (true)
         {
-            print("TileDown");
+            yield return new WaitForSeconds(0.5f);
             for (int i = 0; i < mapList[index].Length; i++)
             {
                 GameObject obj = mapList[index][i];
@@ -106,8 +133,41 @@ public class MapManager : MonoBehaviour
                 rb.angularVelocity = new Vector3(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f)) * Random.Range(1, 10);
                 GameObject.Destroy(obj, 1.0f);
             }
+            if (m_PlayerController.z == index)
+            {
+                StopTileDown();
+            }
             index++;
-            yield return new WaitForSeconds(0.5f);
+
         }
+    }
+
+    // 0:floor
+    // 1:hole
+    // 2:trap_floor
+    // 3:trap_sky
+    private int CalcPR()
+    {
+        int pr = Random.Range(1, 100);
+        if (pr < pr_hole)
+        {
+            return 1;
+        }
+        else if (31 < pr && pr < pr_spikes + 30)
+        {
+            return 2;
+        }
+        else if (61 < pr && pr < pr_sky_spikes + 60)
+        {
+            return 3;
+        }
+        return 0;
+    }
+
+    public void AddPR()
+    {
+        pr_hole += 2;
+        pr_spikes += 2;
+        pr_sky_spikes += 2;
     }
 }

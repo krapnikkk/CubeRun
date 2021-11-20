@@ -11,8 +11,8 @@ public class PlayerController : MonoBehaviour
     private Color colorOne = new Color(122 / 255f, 85 / 255f, 179 / 255f);
     private Color colorTwo = new Color(126 / 255f, 93 / 255f, 183 / 255f);
     private Color playerColor2;
-    private int z = 3;
-    private int x = 2;
+    public int z = 3;
+    public int x = 2;
     // Start is called before the first frame update
     void Start()
     {
@@ -86,6 +86,7 @@ public class PlayerController : MonoBehaviour
     private void CalcPosition(){
         int mapListCount = m_MapManager.mapList.Count;
         if(mapListCount - z <= 12){
+            m_MapManager.AddPR();
             float offsetZ = m_MapManager.mapList[mapListCount - 1][0].GetComponent<Transform>().position.z + m_MapManager.halfFloor / 2;
             m_MapManager.CreateMapItem(offsetZ);
         }
