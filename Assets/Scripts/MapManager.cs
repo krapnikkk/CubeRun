@@ -218,4 +218,23 @@ public class MapManager : MonoBehaviour
         pr_spikes += 2;
         pr_sky_spikes += 2;
     }
+
+    public void ResetMap()
+    {
+        Transform[] child = m_Transform.GetComponentsInChildren<Transform>();
+        for (int i = 1; i < child.Length; i++)
+        {
+            GameObject.Destroy(child[i].gameObject);
+        }
+
+        pr_gem = 2;
+        pr_hole = 0;
+        pr_spikes = 0;
+        pr_sky_spikes = 0;
+
+        index = 0;
+        mapList.Clear();
+
+        CreateMapItem(0);
+    }
 }

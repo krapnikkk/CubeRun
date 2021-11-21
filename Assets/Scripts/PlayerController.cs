@@ -20,7 +20,8 @@ public class PlayerController : MonoBehaviour
         gemCount++;
     }
 
-    private void AddMoveScore(){
+    private void AddMoveScore()
+    {
         moveScore++;
     }
     public int z = 3;
@@ -141,7 +142,6 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter(Collider coll)
     {
-        print(coll);
         if (coll.tag == "spikes")
         {
             StartCoroutine("GameOver", false);
@@ -164,5 +164,25 @@ public class PlayerController : MonoBehaviour
             live = false;
             m_CameraFollow.startFollow = false;
         }
+    }
+
+    public IEnumerator ResetGame()
+    {
+        yield return new WaitForSeconds(2);
+        m_MapManager.ResetMap();
+        m_CameraFollow.ResetCamera();
+
+    }
+
+    private void ResetPlayer()
+    {
+        GameObject.Destroy(gameObject.GetComponent<Rigidbody>());
+        z = 3;
+        x = 2;
+        live = true;
+        moveScore = 0;
+        gemCount = 0;
+
+
     }
 }
